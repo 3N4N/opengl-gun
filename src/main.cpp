@@ -1,4 +1,4 @@
-// #include<stdio.h>
+#include<stdio.h>
 // #include<stdlib.h>
 
 #include <GL/glut.h>
@@ -8,6 +8,8 @@
 #include "glutshapes.h"
 #include "macros.h"
 
+#define ROTSPEED 0.8
+#define MOVSPEED 3
 
 double cameraHeight;
 double cameraAngle;
@@ -15,12 +17,57 @@ int drawgrid;
 int drawaxes;
 double angle;
 
+point cam_pos;
+vector u,l,r;
+
+
 void keyboardListener(unsigned char key, int x,int y)
 {
+    double radangle = ROTSPEED / 57.2957795;
+    vector _l, _r, _u;
+    _l.x = l.x; _l.y = l.y; _l.z = l.z;
+    _r.x = r.x; _r.y = r.y; _r.z = r.z;
+    _u.x = u.x; _u.y = u.y; _u.z = u.z;
+
     switch(key){
 
         case '1':
-            drawgrid=1-drawgrid;
+            l.x = _l.x * cos(radangle) - _r.x * sin(radangle);
+            l.y = _l.y * cos(radangle) - _r.y * sin(radangle);
+            l.z = _l.z * cos(radangle) - _r.z * sin(radangle);
+            r = cross_product(l, u);
+            break;
+        case '2':
+            l.x = _l.x * cos(-1 * radangle) - _r.x * sin(-1 * radangle);
+            l.y = _l.y * cos(-1 * radangle) - _r.y * sin(-1 * radangle);
+            l.z = _l.z * cos(-1 * radangle) - _r.z * sin(-1 * radangle);
+            r = cross_product(l, u);
+            break;
+
+        case '3':
+            l.x = _l.x * cos(radangle) + _u.x * sin(radangle);
+            l.y = _l.y * cos(radangle) + _u.y * sin(radangle);
+            l.z = _l.z * cos(radangle) + _u.z * sin(radangle);
+            u = cross_product(r, l);
+            break;
+        case '4':
+            l.x = _l.x * cos(-1 * radangle) + _u.x * sin(-1 * radangle);
+            l.y = _l.y * cos(-1 * radangle) + _u.y * sin(-1 * radangle);
+            l.z = _l.z * cos(-1 * radangle) + _u.z * sin(-1 * radangle);
+            u = cross_product(r, l);
+            break;
+
+        case '5':
+            u.x = _u.x * cos(-1 * radangle) + _r.x * sin(-1 * radangle);
+            u.y = _u.y * cos(-1 * radangle) + _r.y * sin(-1 * radangle);
+            u.z = _u.z * cos(-1 * radangle) + _r.z * sin(-1 * radangle);
+            r = cross_product(l, u);
+            break;
+        case '6':
+            u.x = _u.x * cos(radangle) + _r.x * sin(radangle);
+            u.y = _u.y * cos(radangle) + _r.y * sin(radangle);
+            u.z = _u.z * cos(radangle) + _r.z * sin(radangle);
+            r = cross_product(l, u);
             break;
 
         default:
@@ -32,31 +79,41 @@ void keyboardListener(unsigned char key, int x,int y)
 void specialKeyListener(int key, int x,int y)
 {
     switch(key){
-        case GLUT_KEY_DOWN:     //down arrow key
-            cameraHeight -= 3.0;
-            break;
         case GLUT_KEY_UP:       // up arrow key
-            cameraHeight += 3.0;
+            // cameraHeight += 3.0;
+            cam_pos.x += l.x * MOVSPEED;
+            cam_pos.y += l.y * MOVSPEED;
+            cam_pos.z += l.z * MOVSPEED;
+            break;
+        case GLUT_KEY_DOWN:     //down arrow key
+            // cameraHeight -= 3.0;
+            cam_pos.x -= l.x * MOVSPEED;
+            cam_pos.y -= l.y * MOVSPEED;
+            cam_pos.z -= l.z * MOVSPEED;
             break;
 
         case GLUT_KEY_RIGHT:
-            cameraAngle += 0.03;
+            // cameraAngle += 0.03;
+            cam_pos.x += r.x * MOVSPEED;
+            cam_pos.y += r.y * MOVSPEED;
+            cam_pos.z += r.z * MOVSPEED;
             break;
         case GLUT_KEY_LEFT:
-            cameraAngle -= 0.03;
+            // cameraAngle -= 0.03;
+            cam_pos.x -= r.x * MOVSPEED;
+            cam_pos.y -= r.y * MOVSPEED;
+            cam_pos.z -= r.z * MOVSPEED;
             break;
 
         case GLUT_KEY_PAGE_UP:
+            cam_pos.x += u.x * MOVSPEED;
+            cam_pos.y += u.y * MOVSPEED;
+            cam_pos.z += u.z * MOVSPEED;
             break;
         case GLUT_KEY_PAGE_DOWN:
-            break;
-
-        case GLUT_KEY_INSERT:
-            break;
-
-        case GLUT_KEY_HOME:
-            break;
-        case GLUT_KEY_END:
+            cam_pos.x -= u.x * MOVSPEED;
+            cam_pos.y -= u.y * MOVSPEED;
+            cam_pos.z -= u.z * MOVSPEED;
             break;
 
         default:
@@ -113,7 +170,10 @@ void display()
     //3. Which direction is the camera's UP direction?
 
     //gluLookAt(100,100,100,    0,0,0,  0,0,1);
-    gluLookAt(200*cos(cameraAngle), 200*sin(cameraAngle), cameraHeight,       0,0,0,      0,0,1);
+    // gluLookAt(200*cos(cameraAngle), 200*sin(cameraAngle), cameraHeight,       0,0,0,      0,0,1);
+    gluLookAt(cam_pos.x, cam_pos.y, cam_pos.z,
+              cam_pos.x + l.x, cam_pos.y + l.y, cam_pos.z + l.z,
+              u.x, u.y, u.z);
     // gluLookAt(0,0,200,  0,0,0,  0,1,0);
 
 
@@ -163,6 +223,23 @@ void init()
     cameraHeight=150.0;
     cameraAngle=1.0;
     angle=0;
+
+    cam_pos.x = 100;
+    cam_pos.y = 100;
+    cam_pos.z = 0;
+
+    u.x = 0;
+    u.y = 0;
+    u.z = 1;
+
+    r.x = -1.0/sqrt(2);
+    r.y = 1.0/sqrt(2);
+    r.z = 0;
+
+    l.x = -1.0/sqrt(2);
+    l.y = -1.0/sqrt(2);
+    l.z = 0;
+
 
     //clear the screen
     glClearColor(0,0,0,0);
