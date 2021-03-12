@@ -1,12 +1,12 @@
 #include<stdio.h>
 // #include<stdlib.h>
+#include<math.h>
 
 #include <GL/glut.h>
 
 #include "point.h"
 #include "vector.h"
 #include "glutshapes.h"
-#include "macros.h"
 
 #define ROTSPEED 0.8
 #define MOVSPEED 3

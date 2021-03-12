@@ -1,6 +1,9 @@
 #include "glutshapes.h"
 #include "point.h"
-#include "macros.h"
+
+#include<math.h>
+
+#define pi (2*acos(0.0))
 
 void drawAxes(int drawaxes)
 {
