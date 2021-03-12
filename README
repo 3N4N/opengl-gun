@@ -76,8 +76,10 @@ Left click the mouse to fire the gun.
 
 Draw the gunshots (red squares) slightly in front of the wall to avoid glitches.
 Be careful to ensure that your model is located well within the far distance
-(assigned in gluPerspective) from the camera. See this to find how to compute
-the intersection of a line with a plane.
+(assigned in gluPerspective) from the camera. See the link below to find how to
+compute the intersection of a line with a plane.
+
+https://ocw.mit.edu/courses/mathematics/18-02sc-multivariable-calculus-fall-2010/1.-vectors-and-matrices/part-c-parametric-equations-for-curves/session-16-intersection-of-a-line-and-a-plane/MIT18_02SC_we_9_comb.pdf
 
 Right click the mouse to toggle viewing the axis.
 
