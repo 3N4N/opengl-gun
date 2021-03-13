@@ -1,5 +1,3 @@
-# Tic Tac Toe
-
 CC     = g++
 CFLAGS = -g -w -Iinc/
 LIBS   = -lGL -lGLU -lglut
