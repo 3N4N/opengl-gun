@@ -189,16 +189,25 @@ void display()
     drawAxes(drawaxes);
     drawGrid(drawgrid);
 
-    //glColor3f(1,0,0);
-    //drawSquare(10);
+    double sphereRadius = 30;
+    double halfSphereRadius = 10;
+    double cylinderHeight = 40;
+    glPushMatrix();
+    glRotatef(90,1,0,0);
+    drawSphere(sphereRadius,80,20);
+    glRotatef(-90,1,0,0);
+    glTranslatef(0,sphereRadius + halfSphereRadius,0);
+    glRotatef(90,1,0,0);
+    drawHalfSphere(halfSphereRadius,80,20);
+    glPopMatrix();
 
-    drawSS(angle);
+    glTranslatef(0,sphereRadius + halfSphereRadius + cylinderHeight/2,0);
+    glRotatef(90,1,0,0);
+    drawCylinder(halfSphereRadius,cylinderHeight,80,20);
 
-    //drawCircle(30,24);
+    // drawSS(angle);
 
-    //drawCone(20,50,24);
 
-    //drawSphere(30,24,20);
 
 
 
@@ -210,7 +219,7 @@ void display()
 
 void animate()
 {
-    angle+=0.05;
+    angle+=1.50;
     //codes for any changes in Models, Camera
     glutPostRedisplay();
 }
