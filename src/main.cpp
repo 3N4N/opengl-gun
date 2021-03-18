@@ -17,6 +17,11 @@ int drawgrid;
 int drawaxes;
 double angle;
 
+double gun_z_rot;
+double gun_y_rot;
+double bar_z_rot;
+double bar_x_rot;
+
 point cam_pos;
 vector u,l,r;
 
@@ -68,6 +73,34 @@ void keyboardListener(unsigned char key, int x,int y)
             u.y = _u.y * cos(radangle) + _r.y * sin(radangle);
             u.z = _u.z * cos(radangle) + _r.z * sin(radangle);
             r = cross_product(l, u);
+            break;
+
+        case 'q':
+            gun_z_rot = (gun_z_rot + 5) > 45 ? 45 : gun_z_rot + 5;
+            break;
+        case 'w':
+            gun_z_rot = (gun_z_rot - 5) < -45 ? -45 : gun_z_rot - 5;
+            break;
+
+        case 'e':
+            gun_y_rot = (gun_y_rot + 5) > 45 ? 45 : gun_y_rot + 5;
+            break;
+        case 'r':
+            gun_y_rot = (gun_y_rot - 5) < -45 ? -45 : gun_y_rot - 5;
+            break;
+
+        case 'a':
+            bar_z_rot = (bar_z_rot + 5) > 45 ? 45 : bar_z_rot + 5;
+            break;
+        case 's':
+            bar_z_rot = (bar_z_rot - 5) < -45 ? -45 : bar_z_rot - 5;
+            break;
+
+        case 'd':
+            bar_x_rot = (bar_x_rot + 5) > 45 ? 45 : bar_x_rot + 5;
+            break;
+        case 'f':
+            bar_x_rot = (bar_x_rot - 5) < -45 ? -45 : bar_x_rot - 5;
             break;
 
         default:
@@ -191,25 +224,31 @@ void display()
 
     double sphereRadius = 30;
     double halfSphereRadius = 10;
-    double cylinderHeight = 40;
-    glPushMatrix();
+    double cylinderHeight = 100;
+
     glRotatef(90,1,0,0);
-    drawSphere(sphereRadius,80,20);
+    glRotatef(gun_z_rot,0,1,0);
+    drawHalfSphere(sphereRadius,80,20,1);
     glRotatef(-90,1,0,0);
+
+    glRotatef(-90,1,0,0);
+    glRotatef(gun_y_rot,1,0,0);
+    drawHalfSphere(sphereRadius,80,20,0);
+    glRotatef(90,1,0,0);
+
     glTranslatef(0,sphereRadius + halfSphereRadius,0);
     glRotatef(90,1,0,0);
-    drawHalfSphere(halfSphereRadius,80,20);
-    glPopMatrix();
+    glRotatef(bar_z_rot,0,1,0);
+    glRotatef(bar_x_rot,0,0,1);
+    drawHalfSphere(halfSphereRadius,80,20,0);
+    glRotatef(-90,1,0,0);
 
-    glTranslatef(0,sphereRadius + halfSphereRadius + cylinderHeight/2,0);
+    glTranslatef(0,cylinderHeight,0);
     glRotatef(90,1,0,0);
     drawCylinder(halfSphereRadius,cylinderHeight,80,20);
-
-    // drawSS(angle);
-
-
-
-
+    glRotatef(-90,1,0,0);
+    glRotatef(-90,1,0,0);
+    drawHorn(halfSphereRadius,80,20);
 
 
     //ADD this line in the end --- if you use double buffer (i.e. GL_DOUBLE)
@@ -248,6 +287,11 @@ void init()
     l.x = -1.0/sqrt(2);
     l.y = -1.0/sqrt(2);
     l.z = 0;
+
+    gun_y_rot = 0.0;
+    gun_z_rot = 0.0;
+    bar_z_rot = 0.0;
+    bar_x_rot = 0.0;
 
 
     //clear the screen

@@ -113,7 +113,7 @@ void drawCone(double radius,double height,int segments)
     }
 }
 
-void drawHalfSphere(double radius,int slices,int stacks)
+void drawHalfSphere(double radius,int slices,int stacks, int reverse)
 {
     struct point points[100][100];
     int i,j;
@@ -137,7 +137,7 @@ void drawHalfSphere(double radius,int slices,int stacks)
 
         for(j=0;j<slices;j++)
         {
-        if (j % 2)
+        if (j % 2 == reverse)
             glColor3f(0,0,0);
         else
             glColor3f(1,1,1);
@@ -201,7 +201,6 @@ void drawCylinder(double radius, double height, int slices, int stacks)
     struct point points[100][100];
     int i,j;
     double h,r;
-    height /= 2;
 
     for(i=0;i<=stacks;i++)
     {
@@ -221,20 +220,53 @@ void drawCylinder(double radius, double height, int slices, int stacks)
         for(j=0;j<slices;j++)
         {
         if (j % 2)
-            glColor3f(0,0,0);
-        else
             glColor3f(1,1,1);
+        else
+            glColor3f(0,0,0);
             glBegin(GL_QUADS);{
                 //upper hemisphere
                 glVertex3f(points[i][j].x,points[i][j].y,points[i][j].z);
                 glVertex3f(points[i][j+1].x,points[i][j+1].y,points[i][j+1].z);
                 glVertex3f(points[i+1][j+1].x,points[i+1][j+1].y,points[i+1][j+1].z);
                 glVertex3f(points[i+1][j].x,points[i+1][j].y,points[i+1][j].z);
-                //lower hemisphere
-                glVertex3f(points[i][j].x,points[i][j].y,-points[i][j].z);
-                glVertex3f(points[i][j+1].x,points[i][j+1].y,-points[i][j+1].z);
-                glVertex3f(points[i+1][j+1].x,points[i+1][j+1].y,-points[i+1][j+1].z);
-                glVertex3f(points[i+1][j].x,points[i+1][j].y,-points[i+1][j].z);
+            }glEnd();
+        }
+    }
+}
+
+void drawHorn(double radius, int slices, int stacks)
+{
+    struct point points[100][100];
+    int i,j;
+    double h,r;
+
+    for(i=0;i<=stacks;i++)
+    {
+        h = radius*sin(((double)i/(double)stacks)*(pi/2));
+        r = 2*radius - radius*cos(((double)i/(double)stacks)*(pi/2));
+        for(j=0;j<=slices;j++)
+        {
+            points[i][j].x=r*cos(((double)j/(double)slices)*2*pi);
+            points[i][j].y=r*sin(((double)j/(double)slices)*2*pi);
+            points[i][j].z=h;
+        }
+    }
+
+    for(i=0;i<stacks;i++)
+    {
+
+        for(j=0;j<slices;j++)
+        {
+            if (j % 2)
+                glColor3f(1,1,1);
+            else
+                glColor3f(0,0,0);
+            glBegin(GL_QUADS);{
+                //upper hemisphere
+                glVertex3f(points[i][j].x,points[i][j].y,points[i][j].z);
+                glVertex3f(points[i][j+1].x,points[i][j+1].y,points[i][j+1].z);
+                glVertex3f(points[i+1][j+1].x,points[i+1][j+1].y,points[i+1][j+1].z);
+                glVertex3f(points[i+1][j].x,points[i+1][j].y,points[i+1][j].z);
             }glEnd();
         }
     }
