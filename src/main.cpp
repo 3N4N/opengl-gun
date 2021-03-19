@@ -23,56 +23,56 @@ double bar_z_rot;
 double bar_x_rot;
 
 point cam_pos;
-vector u,l,r;
+vector cam_u,cam_l,cam_r;
 
 
 void keyboardListener(unsigned char key, int x,int y)
 {
     double radangle = ROTSPEED / 57.2957795;
     vector _l, _r, _u;
-    _l.x = l.x; _l.y = l.y; _l.z = l.z;
-    _r.x = r.x; _r.y = r.y; _r.z = r.z;
-    _u.x = u.x; _u.y = u.y; _u.z = u.z;
+    _l.x = cam_l.x; _l.y = cam_l.y; _l.z = cam_l.z;
+    _r.x = cam_r.x; _r.y = cam_r.y; _r.z = cam_r.z;
+    _u.x = cam_u.x; _u.y = cam_u.y; _u.z = cam_u.z;
 
     switch(key){
 
         case '1':
-            l.x = _l.x * cos(radangle) - _r.x * sin(radangle);
-            l.y = _l.y * cos(radangle) - _r.y * sin(radangle);
-            l.z = _l.z * cos(radangle) - _r.z * sin(radangle);
-            r = cross_product(l, u);
+            cam_l.x = _l.x * cos(radangle) - _r.x * sin(radangle);
+            cam_l.y = _l.y * cos(radangle) - _r.y * sin(radangle);
+            cam_l.z = _l.z * cos(radangle) - _r.z * sin(radangle);
+            cam_r = cross_product(cam_l, cam_u);
             break;
         case '2':
-            l.x = _l.x * cos(-1 * radangle) - _r.x * sin(-1 * radangle);
-            l.y = _l.y * cos(-1 * radangle) - _r.y * sin(-1 * radangle);
-            l.z = _l.z * cos(-1 * radangle) - _r.z * sin(-1 * radangle);
-            r = cross_product(l, u);
+            cam_l.x = _l.x * cos(-1 * radangle) - _r.x * sin(-1 * radangle);
+            cam_l.y = _l.y * cos(-1 * radangle) - _r.y * sin(-1 * radangle);
+            cam_l.z = _l.z * cos(-1 * radangle) - _r.z * sin(-1 * radangle);
+            cam_r = cross_product(cam_l, cam_u);
             break;
 
         case '3':
-            l.x = _l.x * cos(radangle) + _u.x * sin(radangle);
-            l.y = _l.y * cos(radangle) + _u.y * sin(radangle);
-            l.z = _l.z * cos(radangle) + _u.z * sin(radangle);
-            u = cross_product(r, l);
+            cam_l.x = _l.x * cos(radangle) + _u.x * sin(radangle);
+            cam_l.y = _l.y * cos(radangle) + _u.y * sin(radangle);
+            cam_l.z = _l.z * cos(radangle) + _u.z * sin(radangle);
+            cam_u = cross_product(cam_r, cam_l);
             break;
         case '4':
-            l.x = _l.x * cos(-1 * radangle) + _u.x * sin(-1 * radangle);
-            l.y = _l.y * cos(-1 * radangle) + _u.y * sin(-1 * radangle);
-            l.z = _l.z * cos(-1 * radangle) + _u.z * sin(-1 * radangle);
-            u = cross_product(r, l);
+            cam_l.x = _l.x * cos(-1 * radangle) + _u.x * sin(-1 * radangle);
+            cam_l.y = _l.y * cos(-1 * radangle) + _u.y * sin(-1 * radangle);
+            cam_l.z = _l.z * cos(-1 * radangle) + _u.z * sin(-1 * radangle);
+            cam_u = cross_product(cam_r, cam_l);
             break;
 
         case '5':
-            u.x = _u.x * cos(-1 * radangle) + _r.x * sin(-1 * radangle);
-            u.y = _u.y * cos(-1 * radangle) + _r.y * sin(-1 * radangle);
-            u.z = _u.z * cos(-1 * radangle) + _r.z * sin(-1 * radangle);
-            r = cross_product(l, u);
+            cam_u.x = _u.x * cos(-1 * radangle) + _r.x * sin(-1 * radangle);
+            cam_u.y = _u.y * cos(-1 * radangle) + _r.y * sin(-1 * radangle);
+            cam_u.z = _u.z * cos(-1 * radangle) + _r.z * sin(-1 * radangle);
+            cam_r = cross_product(cam_l, cam_u);
             break;
         case '6':
-            u.x = _u.x * cos(radangle) + _r.x * sin(radangle);
-            u.y = _u.y * cos(radangle) + _r.y * sin(radangle);
-            u.z = _u.z * cos(radangle) + _r.z * sin(radangle);
-            r = cross_product(l, u);
+            cam_u.x = _u.x * cos(radangle) + _r.x * sin(radangle);
+            cam_u.y = _u.y * cos(radangle) + _r.y * sin(radangle);
+            cam_u.z = _u.z * cos(radangle) + _r.z * sin(radangle);
+            cam_r = cross_product(cam_l, cam_u);
             break;
 
         case 'q':
@@ -114,39 +114,39 @@ void specialKeyListener(int key, int x,int y)
     switch(key){
         case GLUT_KEY_UP:       // up arrow key
             // cameraHeight += 3.0;
-            cam_pos.x += l.x * MOVSPEED;
-            cam_pos.y += l.y * MOVSPEED;
-            cam_pos.z += l.z * MOVSPEED;
+            cam_pos.x += cam_l.x * MOVSPEED;
+            cam_pos.y += cam_l.y * MOVSPEED;
+            cam_pos.z += cam_l.z * MOVSPEED;
             break;
         case GLUT_KEY_DOWN:     //down arrow key
             // cameraHeight -= 3.0;
-            cam_pos.x -= l.x * MOVSPEED;
-            cam_pos.y -= l.y * MOVSPEED;
-            cam_pos.z -= l.z * MOVSPEED;
+            cam_pos.x -= cam_l.x * MOVSPEED;
+            cam_pos.y -= cam_l.y * MOVSPEED;
+            cam_pos.z -= cam_l.z * MOVSPEED;
             break;
 
         case GLUT_KEY_RIGHT:
             // cameraAngle += 0.03;
-            cam_pos.x += r.x * MOVSPEED;
-            cam_pos.y += r.y * MOVSPEED;
-            cam_pos.z += r.z * MOVSPEED;
+            cam_pos.x += cam_r.x * MOVSPEED;
+            cam_pos.y += cam_r.y * MOVSPEED;
+            cam_pos.z += cam_r.z * MOVSPEED;
             break;
         case GLUT_KEY_LEFT:
             // cameraAngle -= 0.03;
-            cam_pos.x -= r.x * MOVSPEED;
-            cam_pos.y -= r.y * MOVSPEED;
-            cam_pos.z -= r.z * MOVSPEED;
+            cam_pos.x -= cam_r.x * MOVSPEED;
+            cam_pos.y -= cam_r.y * MOVSPEED;
+            cam_pos.z -= cam_r.z * MOVSPEED;
             break;
 
         case GLUT_KEY_PAGE_UP:
-            cam_pos.x += u.x * MOVSPEED;
-            cam_pos.y += u.y * MOVSPEED;
-            cam_pos.z += u.z * MOVSPEED;
+            cam_pos.x += cam_u.x * MOVSPEED;
+            cam_pos.y += cam_u.y * MOVSPEED;
+            cam_pos.z += cam_u.z * MOVSPEED;
             break;
         case GLUT_KEY_PAGE_DOWN:
-            cam_pos.x -= u.x * MOVSPEED;
-            cam_pos.y -= u.y * MOVSPEED;
-            cam_pos.z -= u.z * MOVSPEED;
+            cam_pos.x -= cam_u.x * MOVSPEED;
+            cam_pos.y -= cam_u.y * MOVSPEED;
+            cam_pos.z -= cam_u.z * MOVSPEED;
             break;
 
         default:
@@ -205,8 +205,8 @@ void display()
     //gluLookAt(100,100,100,    0,0,0,  0,0,1);
     // gluLookAt(200*cos(cameraAngle), 200*sin(cameraAngle), cameraHeight,       0,0,0,      0,0,1);
     gluLookAt(cam_pos.x, cam_pos.y, cam_pos.z,
-              cam_pos.x + l.x, cam_pos.y + l.y, cam_pos.z + l.z,
-              u.x, u.y, u.z);
+              cam_pos.x + cam_l.x, cam_pos.y + cam_l.y, cam_pos.z + cam_l.z,
+              cam_u.x, cam_u.y, cam_u.z);
     // gluLookAt(0,0,200,  0,0,0,  0,1,0);
 
 
@@ -276,17 +276,17 @@ void init()
     cam_pos.y = 100;
     cam_pos.z = 0;
 
-    u.x = 0;
-    u.y = 0;
-    u.z = 1;
+    cam_u.x = 0;
+    cam_u.y = 0;
+    cam_u.z = 1;
 
-    r.x = -1.0/sqrt(2);
-    r.y = 1.0/sqrt(2);
-    r.z = 0;
+    cam_r.x = -1.0/sqrt(2);
+    cam_r.y = 1.0/sqrt(2);
+    cam_r.z = 0;
 
-    l.x = -1.0/sqrt(2);
-    l.y = -1.0/sqrt(2);
-    l.z = 0;
+    cam_l.x = -1.0/sqrt(2);
+    cam_l.y = -1.0/sqrt(2);
+    cam_l.z = 0;
 
     gun_y_rot = 0.0;
     gun_z_rot = 0.0;
