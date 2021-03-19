@@ -330,19 +330,19 @@ void display()
      glPushMatrix(); {
          glRotatef(90,1,0,0);
          glRotatef(gun_z_rot,0,1,0);
-         // drawHalfSphere(sphereRadius,80,20,1);
+         drawHalfSphere(sphereRadius,80,20,1);
          glRotatef(-90,1,0,0);
 
          glRotatef(-90,1,0,0);
          glRotatef(gun_y_rot,1,0,0);
-         // drawHalfSphere(sphereRadius,80,20,0);
+         drawHalfSphere(sphereRadius,80,20,0);
          glRotatef(90,1,0,0);
 
          glTranslatef(0,sphereRadius + halfSphereRadius,0);
          glRotatef(90,1,0,0);
          glRotatef(bar_y_rot,1,0,0);
          glRotatef(bar_x_rot,0,0,1);
-         // drawHalfSphere(halfSphereRadius,80,20,0);
+         drawHalfSphere(halfSphereRadius,80,20,0);
          glRotatef(-90,1,0,0);
 
          glTranslatef(0,cylinderHeight,0);
