@@ -261,6 +261,8 @@ void mouseListener(int button, int state, int x, int y)
                 shot.x = bar_pos.x - t * (gun_l.x - bar_pos.x);
                 shot.y = bar_pos.y - t * (gun_l.y - bar_pos.y);
                 shot.z = bar_pos.z - t * (gun_l.z - bar_pos.z);
+                if (shot.x > -100 && shot.x < 100
+                    && shot.z > -100 && shot.z < 100)
                 shots.push_back(shot);
                 printf("%f,%f,%f\n", shot.x,shot.y,shot.z);
             }
