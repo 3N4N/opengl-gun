@@ -38,7 +38,7 @@ double cylinderHeight = 100;
 vector<point> shots;
 
 
-void drawGunAxes()
+void drawGunLaser()
 {
     glBegin(GL_LINES); {
         glColor3f(0.0, 1.0, 0.0);
@@ -354,7 +354,7 @@ void display()
 
      } glPopMatrix();
 
-     drawGunAxes();
+     drawGunLaser();
 
      glColor3f(1, 0, 0);
      for (auto i = shots.begin(); i != shots.end(); ++i) {
