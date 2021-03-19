@@ -8,10 +8,9 @@ void drawSquare(double a);
 void drawGrid(int drawgrid);
 void drawCircle(double radius,int segments);
 void drawCone(double radius,double height,int segments);
-void drawHalfSphere(double radius,int slices,int stacks, int reverse);
 void drawSphere(double radius,int slices,int stacks);
-void drawCylinder(double radius, double height, int slices, int stacks);
-void drawHorn(double radius, int slices, int stacks);
-void drawSS(double angle);
+void drawHalfSphere(double radius,int slices,int stacks, int reverse);
+void drawCylinder(double radius, double height, int slices, int stacks, int reverse);
+void drawHorn(double radius, int slices, int stacks, int reverse);
 
 #endif // _GLUT_SHAPES_H_

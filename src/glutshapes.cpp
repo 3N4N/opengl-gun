@@ -138,9 +138,9 @@ void drawHalfSphere(double radius,int slices,int stacks, int reverse)
         for(j=0;j<slices;j++)
         {
         if (j % 2 == reverse)
-            glColor3f(0,0,0);
-        else
             glColor3f(1,1,1);
+        else
+            glColor3f(0,0,0);
             glBegin(GL_QUADS);{
                 //upper hemisphere
                 glVertex3f(points[i][j].x,points[i][j].y,points[i][j].z);
@@ -172,14 +172,10 @@ void drawSphere(double radius,int slices,int stacks)
     //draw quads using generated points
     for(i=0;i<stacks;i++)
     {
-        // glColor3f((double)i/(double)stacks,(double)i/(double)stacks,(double)i/(double)stacks);
+        glColor3f((double)i/(double)stacks,(double)i/(double)stacks,(double)i/(double)stacks);
 
         for(j=0;j<slices;j++)
         {
-        if (j % 2)
-            glColor3f(0,0,0);
-        else
-            glColor3f(1,1,1);
             glBegin(GL_QUADS);{
                 //upper hemisphere
                 glVertex3f(points[i][j].x,points[i][j].y,points[i][j].z);
@@ -196,7 +192,7 @@ void drawSphere(double radius,int slices,int stacks)
     }
 }
 
-void drawCylinder(double radius, double height, int slices, int stacks)
+void drawCylinder(double radius, double height, int slices, int stacks, int reverse)
 {
     struct point points[100][100];
     int i,j;
@@ -219,10 +215,10 @@ void drawCylinder(double radius, double height, int slices, int stacks)
 
         for(j=0;j<slices;j++)
         {
-        if (j % 2)
-            glColor3f(1,1,1);
-        else
-            glColor3f(0,0,0);
+            if (j % 2 == reverse)
+                glColor3f(1,1,1);
+            else
+                glColor3f(0,0,0);
             glBegin(GL_QUADS);{
                 //upper hemisphere
                 glVertex3f(points[i][j].x,points[i][j].y,points[i][j].z);
@@ -234,7 +230,7 @@ void drawCylinder(double radius, double height, int slices, int stacks)
     }
 }
 
-void drawHorn(double radius, int slices, int stacks)
+void drawHorn(double radius, int slices, int stacks, int reverse)
 {
     struct point points[100][100];
     int i,j;
@@ -257,7 +253,7 @@ void drawHorn(double radius, int slices, int stacks)
 
         for(j=0;j<slices;j++)
         {
-            if (j % 2)
+            if (j % 2 == reverse)
                 glColor3f(1,1,1);
             else
                 glColor3f(0,0,0);
@@ -272,31 +268,3 @@ void drawHorn(double radius, int slices, int stacks)
     }
 }
 
-
-void drawSS(double angle)
-{
-    glColor3f(1,0,0);
-    drawSquare(20);
-
-    glRotatef(angle,0,0,1);
-    glTranslatef(110,0,0);
-    glRotatef(2*angle,0,0,1);
-    glColor3f(0,1,0);
-    drawSquare(15);
-
-    glPushMatrix();
-    {
-        glRotatef(angle,0,0,1);
-        glTranslatef(60,0,0);
-        glRotatef(2*angle,0,0,1);
-        glColor3f(0,0,1);
-        drawSquare(10);
-    }
-    glPopMatrix();
-
-    glRotatef(3*angle,0,0,1);
-    glTranslatef(40,0,0);
-    glRotatef(4*angle,0,0,1);
-    glColor3f(1,1,0);
-    drawSquare(5);
-}

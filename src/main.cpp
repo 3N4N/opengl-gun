@@ -226,29 +226,39 @@ void display()
     double halfSphereRadius = 10;
     double cylinderHeight = 100;
 
-    glRotatef(90,1,0,0);
-    glRotatef(gun_z_rot,0,1,0);
-    drawHalfSphere(sphereRadius,80,20,1);
-    glRotatef(-90,1,0,0);
+    glPushMatrix(); {
+        glRotatef(90,1,0,0);
+        glRotatef(gun_z_rot,0,1,0);
+        drawHalfSphere(sphereRadius,80,20,1);
+        glRotatef(-90,1,0,0);
 
-    glRotatef(-90,1,0,0);
-    glRotatef(gun_y_rot,1,0,0);
-    drawHalfSphere(sphereRadius,80,20,0);
-    glRotatef(90,1,0,0);
+        glRotatef(-90,1,0,0);
+        glRotatef(gun_y_rot,1,0,0);
+        drawHalfSphere(sphereRadius,80,20,0);
+        glRotatef(90,1,0,0);
 
-    glTranslatef(0,sphereRadius + halfSphereRadius,0);
-    glRotatef(90,1,0,0);
-    glRotatef(bar_z_rot,0,1,0);
-    glRotatef(bar_x_rot,0,0,1);
-    drawHalfSphere(halfSphereRadius,80,20,0);
-    glRotatef(-90,1,0,0);
+        glTranslatef(0,sphereRadius + halfSphereRadius,0);
+        glRotatef(90,1,0,0);
+        glRotatef(bar_z_rot,0,1,0);
+        glRotatef(bar_x_rot,0,0,1);
+        drawHalfSphere(halfSphereRadius,80,20,0);
+        glRotatef(-90,1,0,0);
 
-    glTranslatef(0,cylinderHeight,0);
+        glTranslatef(0,cylinderHeight,0);
+        glRotatef(90,1,0,0);
+        drawCylinder(halfSphereRadius,cylinderHeight,80,20,0);
+        glRotatef(-90,1,0,0);
+        glRotatef(-90,1,0,0);
+        drawHorn(halfSphereRadius,80,20,1);
+
+        glTranslatef(0,0,50);
+        drawSquare(10);
+    } glPopMatrix();
+
+    glColor3f(0.6, 0.6, 0.6);   //grey
+    glTranslatef(0,400,0);
     glRotatef(90,1,0,0);
-    drawCylinder(halfSphereRadius,cylinderHeight,80,20);
-    glRotatef(-90,1,0,0);
-    glRotatef(-90,1,0,0);
-    drawHorn(halfSphereRadius,80,20);
+    drawSquare(100);
 
 
     //ADD this line in the end --- if you use double buffer (i.e. GL_DOUBLE)
