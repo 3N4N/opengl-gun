@@ -1,8 +1,8 @@
-#include "vector.h"
+#include "vec.h"
 
-vector cross_product(vector a, vector b)
+vec cross_product(vec a, vec b)
 {
-    vector prod;
+    vec prod;
 
     prod.x = a.y * b.z - b.y * a.z;
     prod.y = a.z * b.x - b.z * a.x;
@@ -11,7 +11,7 @@ vector cross_product(vector a, vector b)
     return prod;
 }
 
-double dot_product(vector a, vector b)
+double dot_product(vec a, vec b)
 {
     return a.x * b.x + a.y * b.y + a.z * b.z;
 }

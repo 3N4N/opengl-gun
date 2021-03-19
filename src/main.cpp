@@ -1,13 +1,17 @@
 #include<stdio.h>
 // #include<stdlib.h>
 #include<math.h>
+#include <vector>
 
 #include <GL/glut.h>
 
 #include "point.h"
-#include "vector.h"
+#include "vec.h"
 #include "glutshapes.h"
 
+using std::vector;
+
+#define pi (2*acos(0.0))
 #define ROTSPEED 0.8
 #define MOVSPEED 3
 
@@ -23,84 +27,185 @@ double bar_z_rot;
 double bar_x_rot;
 
 point cam_pos;
-vector cam_u,cam_l,cam_r;
+point bar_pos;
+vec cam_u,cam_l,cam_r;
+vec gun_u,gun_l,gun_r;
+point circle_b, circle_f;
 
+double sphereRadius = 30;
+double halfSphereRadius = 10;
+double cylinderHeight = 100;
+
+vector<point> shots;
+
+
+void drawGunAxes()
+{
+    glBegin(GL_LINES); {
+        glColor3f(0.0, 1.0, 0.0);
+        glVertex3f(bar_pos.x,bar_pos.y,bar_pos.z);
+        glVertex3f(gun_l.x*1000,gun_l.y*1000,gun_l.z*1000);
+    } glEnd();
+}
 
 void keyboardListener(unsigned char key, int x,int y)
 {
     double radangle = ROTSPEED / 57.2957795;
-    vector _l, _r, _u;
-    _l.x = cam_l.x; _l.y = cam_l.y; _l.z = cam_l.z;
-    _r.x = cam_r.x; _r.y = cam_r.y; _r.z = cam_r.z;
-    _u.x = cam_u.x; _u.y = cam_u.y; _u.z = cam_u.z;
+    vec _cam_l, _cam_r, _cam_u;
+    vec _gun_l, _gun_r, _gun_u;
+    point _bar_pos = bar_pos;
+    _cam_l.x = cam_l.x; _cam_l.y = cam_l.y; _cam_l.z = cam_l.z;
+    _cam_r.x = cam_r.x; _cam_r.y = cam_r.y; _cam_r.z = cam_r.z;
+    _cam_u.x = cam_u.x; _cam_u.y = cam_u.y; _cam_u.z = cam_u.z;
+    _gun_l.x = gun_l.x; _gun_l.y = gun_l.y; _gun_l.z = gun_l.z;
+    _gun_r.x = gun_r.x; _gun_r.y = gun_r.y; _gun_r.z = gun_r.z;
+    _gun_u.x = gun_u.x; _gun_u.y = gun_u.y; _gun_u.z = gun_u.z;
 
     switch(key){
 
         case '1':
-            cam_l.x = _l.x * cos(radangle) - _r.x * sin(radangle);
-            cam_l.y = _l.y * cos(radangle) - _r.y * sin(radangle);
-            cam_l.z = _l.z * cos(radangle) - _r.z * sin(radangle);
+            cam_l.x = _cam_l.x * cos(radangle) - _cam_r.x * sin(radangle);
+            cam_l.y = _cam_l.y * cos(radangle) - _cam_r.y * sin(radangle);
+            cam_l.z = _cam_l.z * cos(radangle) - _cam_r.z * sin(radangle);
             cam_r = cross_product(cam_l, cam_u);
             break;
         case '2':
-            cam_l.x = _l.x * cos(-1 * radangle) - _r.x * sin(-1 * radangle);
-            cam_l.y = _l.y * cos(-1 * radangle) - _r.y * sin(-1 * radangle);
-            cam_l.z = _l.z * cos(-1 * radangle) - _r.z * sin(-1 * radangle);
+            cam_l.x = _cam_l.x * cos(-1 * radangle) - _cam_r.x * sin(-1 * radangle);
+            cam_l.y = _cam_l.y * cos(-1 * radangle) - _cam_r.y * sin(-1 * radangle);
+            cam_l.z = _cam_l.z * cos(-1 * radangle) - _cam_r.z * sin(-1 * radangle);
             cam_r = cross_product(cam_l, cam_u);
             break;
 
         case '3':
-            cam_l.x = _l.x * cos(radangle) + _u.x * sin(radangle);
-            cam_l.y = _l.y * cos(radangle) + _u.y * sin(radangle);
-            cam_l.z = _l.z * cos(radangle) + _u.z * sin(radangle);
+            cam_l.x = _cam_l.x * cos(radangle) + _cam_u.x * sin(radangle);
+            cam_l.y = _cam_l.y * cos(radangle) + _cam_u.y * sin(radangle);
+            cam_l.z = _cam_l.z * cos(radangle) + _cam_u.z * sin(radangle);
             cam_u = cross_product(cam_r, cam_l);
             break;
         case '4':
-            cam_l.x = _l.x * cos(-1 * radangle) + _u.x * sin(-1 * radangle);
-            cam_l.y = _l.y * cos(-1 * radangle) + _u.y * sin(-1 * radangle);
-            cam_l.z = _l.z * cos(-1 * radangle) + _u.z * sin(-1 * radangle);
+            cam_l.x = _cam_l.x * cos(-1 * radangle) + _cam_u.x * sin(-1 * radangle);
+            cam_l.y = _cam_l.y * cos(-1 * radangle) + _cam_u.y * sin(-1 * radangle);
+            cam_l.z = _cam_l.z * cos(-1 * radangle) + _cam_u.z * sin(-1 * radangle);
             cam_u = cross_product(cam_r, cam_l);
             break;
 
         case '5':
-            cam_u.x = _u.x * cos(-1 * radangle) + _r.x * sin(-1 * radangle);
-            cam_u.y = _u.y * cos(-1 * radangle) + _r.y * sin(-1 * radangle);
-            cam_u.z = _u.z * cos(-1 * radangle) + _r.z * sin(-1 * radangle);
+            cam_u.x = _cam_u.x * cos(-1 * radangle) + _cam_r.x * sin(-1 * radangle);
+            cam_u.y = _cam_u.y * cos(-1 * radangle) + _cam_r.y * sin(-1 * radangle);
+            cam_u.z = _cam_u.z * cos(-1 * radangle) + _cam_r.z * sin(-1 * radangle);
             cam_r = cross_product(cam_l, cam_u);
             break;
         case '6':
-            cam_u.x = _u.x * cos(radangle) + _r.x * sin(radangle);
-            cam_u.y = _u.y * cos(radangle) + _r.y * sin(radangle);
-            cam_u.z = _u.z * cos(radangle) + _r.z * sin(radangle);
+            cam_u.x = _cam_u.x * cos(radangle) + _cam_r.x * sin(radangle);
+            cam_u.y = _cam_u.y * cos(radangle) + _cam_r.y * sin(radangle);
+            cam_u.z = _cam_u.z * cos(radangle) + _cam_r.z * sin(radangle);
             cam_r = cross_product(cam_l, cam_u);
             break;
 
         case 'q':
-            gun_z_rot = (gun_z_rot + 5) > 45 ? 45 : gun_z_rot + 5;
+            gun_z_rot = gun_z_rot + 5;
+            if (gun_z_rot > 45) {
+                gun_z_rot = 45;
+            } else {
+                float ang = 5*pi/180;
+                bar_pos.x = _bar_pos.x*cos(ang) - _bar_pos.y*sin(ang);
+                bar_pos.y = _bar_pos.x*sin(ang) + _bar_pos.y*cos(ang);
+                gun_l.x = _gun_l.x * cos(ang) - _gun_r.x * sin(ang);
+                gun_l.y = _gun_l.y * cos(ang) - _gun_r.y * sin(ang);
+                gun_l.z = _gun_l.z * cos(ang) - _gun_r.z * sin(ang);
+                gun_r = cross_product(gun_l, gun_u);
+            }
             break;
         case 'w':
-            gun_z_rot = (gun_z_rot - 5) < -45 ? -45 : gun_z_rot - 5;
+            gun_z_rot = gun_z_rot - 5;
+            if (gun_z_rot < -45) {
+                gun_z_rot = -45;
+            } else {
+                float ang = -5*pi/180;
+                bar_pos.x = _bar_pos.x*cos(ang) - _bar_pos.y*sin(ang);
+                bar_pos.y = _bar_pos.x*sin(ang) + _bar_pos.y*cos(ang);
+                gun_l.x = _gun_l.x * cos(ang) - _gun_r.x * sin(ang);
+                gun_l.y = _gun_l.y * cos(ang) - _gun_r.y * sin(ang);
+                gun_l.z = _gun_l.z * cos(ang) - _gun_r.z * sin(ang);
+                gun_r = cross_product(gun_l, gun_u);
+            }
             break;
 
         case 'e':
-            gun_y_rot = (gun_y_rot + 5) > 45 ? 45 : gun_y_rot + 5;
+            gun_y_rot = gun_y_rot + 5;
+            if (gun_y_rot > 45) {
+                gun_y_rot = 45;
+            } else {
+                float ang = 5*pi/180;
+                bar_pos.y = _bar_pos.y*cos(ang) - _bar_pos.z*sin(ang);
+                bar_pos.z = _bar_pos.y*sin(ang) + _bar_pos.z*cos(ang);
+                gun_l.x = _gun_l.x * cos(ang) + _gun_u.x * sin(ang);
+                gun_l.y = _gun_l.y * cos(ang) + _gun_u.y * sin(ang);
+                gun_l.z = _gun_l.z * cos(ang) + _gun_u.z * sin(ang);
+                gun_u = cross_product(gun_r, gun_l);
+            }
             break;
         case 'r':
-            gun_y_rot = (gun_y_rot - 5) < -45 ? -45 : gun_y_rot - 5;
+            gun_y_rot = gun_y_rot - 5;
+            if (gun_y_rot < -45) {
+                gun_y_rot = -45;
+            } else {
+                float ang = -5*pi/180;
+                bar_pos.y = _bar_pos.y*cos(ang) - _bar_pos.z*sin(ang);
+                bar_pos.z = _bar_pos.y*sin(ang) + _bar_pos.z*cos(ang);
+                gun_l.x = _gun_l.x * cos(ang) + _gun_u.x * sin(ang);
+                gun_l.y = _gun_l.y * cos(ang) + _gun_u.y * sin(ang);
+                gun_l.z = _gun_l.z * cos(ang) + _gun_u.z * sin(ang);
+                gun_u = cross_product(gun_r, gun_l);
+            }
             break;
 
         case 'a':
-            bar_z_rot = (bar_z_rot + 5) > 45 ? 45 : bar_z_rot + 5;
+            bar_z_rot = bar_z_rot + 5;
+            if (bar_z_rot > 45) {
+                bar_z_rot = 45;
+            } else {
+                float ang = 5*pi/180;
+                gun_l.x = _gun_l.x * cos(ang) - _gun_r.x * sin(ang);
+                gun_l.y = _gun_l.y * cos(ang) - _gun_r.y * sin(ang);
+                gun_l.z = _gun_l.z * cos(ang) - _gun_r.z * sin(ang);
+                gun_r = cross_product(gun_l, gun_u);
+            }
             break;
         case 's':
-            bar_z_rot = (bar_z_rot - 5) < -45 ? -45 : bar_z_rot - 5;
+            bar_z_rot = bar_z_rot - 5;
+            if (bar_z_rot < -45) {
+                bar_z_rot = -45;
+            } else {
+                float ang = -5*pi/180;
+                gun_l.x = _gun_l.x * cos(ang) - _gun_r.x * sin(ang);
+                gun_l.y = _gun_l.y * cos(ang) - _gun_r.y * sin(ang);
+                gun_l.z = _gun_l.z * cos(ang) - _gun_r.z * sin(ang);
+                gun_r = cross_product(gun_l, gun_u);
+            }
             break;
 
         case 'd':
-            bar_x_rot = (bar_x_rot + 5) > 45 ? 45 : bar_x_rot + 5;
+            bar_x_rot = bar_x_rot + 5;
+            if (bar_x_rot > 45) {
+                bar_x_rot = 45;
+            } else {
+                // gun_u.x = _gun_u.x * cos(5*pi/180) - _gun_r.x * sin(5*pi/180);
+                // gun_u.y = _gun_u.y * cos(5*pi/180) - _gun_r.y * sin(5*pi/180);
+                // gun_u.z = _gun_u.z * cos(5*pi/180) - _gun_r.z * sin(5*pi/180);
+                // gun_r = cross_product(gun_l, gun_u);
+            }
             break;
         case 'f':
-            bar_x_rot = (bar_x_rot - 5) < -45 ? -45 : bar_x_rot - 5;
+            bar_x_rot = bar_x_rot - 5;
+            if (bar_x_rot < -45) {
+                bar_x_rot = -45;
+            } else {
+                // gun_u.x = _gun_u.x * cos(-5*pi/180) - _gun_r.x * sin(-5*pi/180);
+                // gun_u.y = _gun_u.y * cos(-5*pi/180) - _gun_r.y * sin(-5*pi/180);
+                // gun_u.z = _gun_u.z * cos(-5*pi/180) - _gun_r.z * sin(-5*pi/180);
+                // gun_r = cross_product(gun_l, gun_u);
+            }
             break;
 
         default:
@@ -160,13 +265,22 @@ void mouseListener(int button, int state, int x, int y)
     //x, y is the x-y of the screen (2D)
     switch(button){
         case GLUT_LEFT_BUTTON:
-            if(state == GLUT_DOWN){     // 2 times?? in ONE click? -- solution is checking DOWN or UP
-                drawaxes=1-drawaxes;
+            if(state == GLUT_DOWN) {
+                float t;
+                t = (bar_pos.y - 390) / (gun_l.y - bar_pos.y);
+                point shot;
+                shot.x = bar_pos.x - t * (gun_l.x - bar_pos.x);
+                shot.y = bar_pos.y - t * (gun_l.y - bar_pos.y);
+                shot.z = bar_pos.z - t * (gun_l.z - bar_pos.z);
+                shots.push_back(shot);
+                printf("%f,%f,%f\n", shot.x,shot.y,shot.z);
             }
             break;
 
         case GLUT_RIGHT_BUTTON:
-            //........
+            if(state == GLUT_DOWN){     // 2 times?? in ONE click? -- solution is checking DOWN or UP
+                drawaxes=1-drawaxes;
+            }
             break;
 
         case GLUT_MIDDLE_BUTTON:
@@ -222,46 +336,52 @@ void display()
     drawAxes(drawaxes);
     drawGrid(drawgrid);
 
-    double sphereRadius = 30;
-    double halfSphereRadius = 10;
-    double cylinderHeight = 100;
+     glPushMatrix(); {
+         glRotatef(90,1,0,0);
+         glRotatef(gun_z_rot,0,1,0);
+         // drawHalfSphere(sphereRadius,80,20,1);
+         glRotatef(-90,1,0,0);
 
-    glPushMatrix(); {
-        glRotatef(90,1,0,0);
-        glRotatef(gun_z_rot,0,1,0);
-        drawHalfSphere(sphereRadius,80,20,1);
-        glRotatef(-90,1,0,0);
+         glRotatef(-90,1,0,0);
+         glRotatef(gun_y_rot,1,0,0);
+         // drawHalfSphere(sphereRadius,80,20,0);
+         glRotatef(90,1,0,0);
 
-        glRotatef(-90,1,0,0);
-        glRotatef(gun_y_rot,1,0,0);
-        drawHalfSphere(sphereRadius,80,20,0);
-        glRotatef(90,1,0,0);
+         glTranslatef(0,sphereRadius + halfSphereRadius,0);
+         glRotatef(90,1,0,0);
+         glRotatef(bar_z_rot,0,1,0);
+         glRotatef(bar_x_rot,0,0,1);
+         // drawHalfSphere(halfSphereRadius,80,20,0);
+         glRotatef(-90,1,0,0);
 
-        glTranslatef(0,sphereRadius + halfSphereRadius,0);
-        glRotatef(90,1,0,0);
-        glRotatef(bar_z_rot,0,1,0);
-        glRotatef(bar_x_rot,0,0,1);
-        drawHalfSphere(halfSphereRadius,80,20,0);
-        glRotatef(-90,1,0,0);
+         glTranslatef(0,cylinderHeight,0);
+         glRotatef(90,1,0,0);
+         // drawCylinder(halfSphereRadius,cylinderHeight,80,20,0);
+         glRotatef(-90,1,0,0);
+         glRotatef(-90,1,0,0);
+         // drawHorn(halfSphereRadius,80,20,1);
 
-        glTranslatef(0,cylinderHeight,0);
-        glRotatef(90,1,0,0);
-        drawCylinder(halfSphereRadius,cylinderHeight,80,20,0);
-        glRotatef(-90,1,0,0);
-        glRotatef(-90,1,0,0);
-        drawHorn(halfSphereRadius,80,20,1);
+     } glPopMatrix();
 
-        glTranslatef(0,0,50);
-        drawSquare(10);
-    } glPopMatrix();
+     drawGunAxes();
 
-    glColor3f(0.6, 0.6, 0.6);   //grey
-    glTranslatef(0,400,0);
-    glRotatef(90,1,0,0);
-    drawSquare(100);
+     glColor3f(1, 0, 0);
+     for (auto i = shots.begin(); i != shots.end(); ++i) {
+         glTranslatef(i->x,i->y,i->z);
+         glRotatef(90,1,0,0);
+         drawSquare(2);
+         glRotatef(-90,1,0,0);
+         glTranslatef(-1*i->x,-1*i->y,-1*i->z);
+     }
+
+     glColor3f(0.6, 0.6, 0.6);   //grey
+     glTranslatef(0,400,0);
+     glRotatef(90,1,0,0);
+     drawSquare(100);
 
 
-    //ADD this line in the end --- if you use double buffer (i.e. GL_DOUBLE)
+
+    // ADD this line in the end --- if you use double buffer (i.e. GL_DOUBLE)
     glutSwapBuffers();
 }
 
@@ -277,7 +397,7 @@ void init()
 {
     //codes for initialization
     drawgrid=0;
-    drawaxes=1;
+    drawaxes=0;
     cameraHeight=150.0;
     cameraAngle=1.0;
     angle=0;
@@ -285,6 +405,10 @@ void init()
     cam_pos.x = 100;
     cam_pos.y = 100;
     cam_pos.z = 0;
+
+    bar_pos.x = 0;
+    bar_pos.y = sphereRadius+halfSphereRadius;
+    bar_pos.z = 0;
 
     cam_u.x = 0;
     cam_u.y = 0;
@@ -297,6 +421,18 @@ void init()
     cam_l.x = -1.0/sqrt(2);
     cam_l.y = -1.0/sqrt(2);
     cam_l.z = 0;
+
+    gun_u.x = 0;
+    gun_u.y = 0;
+    gun_u.z = 1;
+
+    gun_r.x = 1;
+    gun_r.y = 0;
+    gun_r.z = 0;
+
+    gun_l.x = 0;
+    gun_l.y = 1;
+    gun_l.z = 0;
 
     gun_y_rot = 0.0;
     gun_z_rot = 0.0;
