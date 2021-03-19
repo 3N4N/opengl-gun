@@ -7,8 +7,8 @@ There are three tasks in this assignment:
 3. Bubbles (Problem 2.exe)
 
 
-Fully Controllable Camera (Problem 1.exe)
------------------------------------------
+Fully Controllable Camera
+-------------------------
 
 Up arrow - move forward
 Down arrow - move backward
@@ -63,8 +63,8 @@ as follows:
                   u.x, u.y, u.z);
 
 
-Gun (Problem 1.exe)
--------------------
+Gun
+---
 
 Color pattern of the gun should be same as the one modeled in Problem 1.exe. You
 can't use any OpenGL library function to draw the parts of the gun.
@@ -84,8 +84,8 @@ https://ocw.mit.edu/courses/mathematics/18-02sc-multivariable-calculus-fall-2010
 Right click the mouse to toggle viewing the axis.
 
 
-Bubbles (Problem 2.exe)
------------------------
+Bubbles
+-------
 
 The camera is fixed looking at the center of the green boundary square from a
 perpendicular position. There is red circle inside the square.
