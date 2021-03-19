@@ -23,14 +23,13 @@ double angle;
 
 double gun_z_rot;
 double gun_y_rot;
-double bar_z_rot;
+double bar_y_rot;
 double bar_x_rot;
 
 point cam_pos;
 point bar_pos;
 vec cam_u,cam_l,cam_r;
-vec gun_u,gun_l,gun_r;
-point circle_b, circle_f;
+vec gun_l;
 
 double sphereRadius = 30;
 double halfSphereRadius = 10;
@@ -44,7 +43,7 @@ void drawGunAxes()
     glBegin(GL_LINES); {
         glColor3f(0.0, 1.0, 0.0);
         glVertex3f(bar_pos.x,bar_pos.y,bar_pos.z);
-        glVertex3f(gun_l.x*1000,gun_l.y*1000,gun_l.z*1000);
+        glVertex3f(gun_l.x,gun_l.y,gun_l.z);
     } glEnd();
 }
 
@@ -58,8 +57,6 @@ void keyboardListener(unsigned char key, int x,int y)
     _cam_r.x = cam_r.x; _cam_r.y = cam_r.y; _cam_r.z = cam_r.z;
     _cam_u.x = cam_u.x; _cam_u.y = cam_u.y; _cam_u.z = cam_u.z;
     _gun_l.x = gun_l.x; _gun_l.y = gun_l.y; _gun_l.z = gun_l.z;
-    _gun_r.x = gun_r.x; _gun_r.y = gun_r.y; _gun_r.z = gun_r.z;
-    _gun_u.x = gun_u.x; _gun_u.y = gun_u.y; _gun_u.z = gun_u.z;
 
     switch(key){
 
@@ -110,10 +107,8 @@ void keyboardListener(unsigned char key, int x,int y)
                 float ang = 5*pi/180;
                 bar_pos.x = _bar_pos.x*cos(ang) - _bar_pos.y*sin(ang);
                 bar_pos.y = _bar_pos.x*sin(ang) + _bar_pos.y*cos(ang);
-                gun_l.x = _gun_l.x * cos(ang) - _gun_r.x * sin(ang);
-                gun_l.y = _gun_l.y * cos(ang) - _gun_r.y * sin(ang);
-                gun_l.z = _gun_l.z * cos(ang) - _gun_r.z * sin(ang);
-                gun_r = cross_product(gun_l, gun_u);
+                gun_l.x = _gun_l.x*cos(ang) - _gun_l.y*sin(ang);
+                gun_l.y = _gun_l.x*sin(ang) + _gun_l.y*cos(ang);
             }
             break;
         case 'w':
@@ -124,10 +119,8 @@ void keyboardListener(unsigned char key, int x,int y)
                 float ang = -5*pi/180;
                 bar_pos.x = _bar_pos.x*cos(ang) - _bar_pos.y*sin(ang);
                 bar_pos.y = _bar_pos.x*sin(ang) + _bar_pos.y*cos(ang);
-                gun_l.x = _gun_l.x * cos(ang) - _gun_r.x * sin(ang);
-                gun_l.y = _gun_l.y * cos(ang) - _gun_r.y * sin(ang);
-                gun_l.z = _gun_l.z * cos(ang) - _gun_r.z * sin(ang);
-                gun_r = cross_product(gun_l, gun_u);
+                gun_l.x = _gun_l.x*cos(ang) - _gun_l.y*sin(ang);
+                gun_l.y = _gun_l.x*sin(ang) + _gun_l.y*cos(ang);
             }
             break;
 
@@ -139,10 +132,8 @@ void keyboardListener(unsigned char key, int x,int y)
                 float ang = 5*pi/180;
                 bar_pos.y = _bar_pos.y*cos(ang) - _bar_pos.z*sin(ang);
                 bar_pos.z = _bar_pos.y*sin(ang) + _bar_pos.z*cos(ang);
-                gun_l.x = _gun_l.x * cos(ang) + _gun_u.x * sin(ang);
-                gun_l.y = _gun_l.y * cos(ang) + _gun_u.y * sin(ang);
-                gun_l.z = _gun_l.z * cos(ang) + _gun_u.z * sin(ang);
-                gun_u = cross_product(gun_r, gun_l);
+                gun_l.y = _gun_l.y*cos(ang) - _gun_l.z*sin(ang);
+                gun_l.z = _gun_l.y*sin(ang) + _gun_l.z*cos(ang);
             }
             break;
         case 'r':
@@ -153,59 +144,57 @@ void keyboardListener(unsigned char key, int x,int y)
                 float ang = -5*pi/180;
                 bar_pos.y = _bar_pos.y*cos(ang) - _bar_pos.z*sin(ang);
                 bar_pos.z = _bar_pos.y*sin(ang) + _bar_pos.z*cos(ang);
-                gun_l.x = _gun_l.x * cos(ang) + _gun_u.x * sin(ang);
-                gun_l.y = _gun_l.y * cos(ang) + _gun_u.y * sin(ang);
-                gun_l.z = _gun_l.z * cos(ang) + _gun_u.z * sin(ang);
-                gun_u = cross_product(gun_r, gun_l);
+                gun_l.y = _gun_l.y*cos(ang) - _gun_l.z*sin(ang);
+                gun_l.z = _gun_l.y*sin(ang) + _gun_l.z*cos(ang);
             }
             break;
 
         case 'a':
-            bar_z_rot = bar_z_rot + 5;
-            if (bar_z_rot > 45) {
-                bar_z_rot = 45;
+            bar_y_rot = bar_y_rot + 5;
+            if (bar_y_rot > 45) {
+                bar_y_rot = 45;
             } else {
                 float ang = 5*pi/180;
-                gun_l.x = _gun_l.x * cos(ang) - _gun_r.x * sin(ang);
-                gun_l.y = _gun_l.y * cos(ang) - _gun_r.y * sin(ang);
-                gun_l.z = _gun_l.z * cos(ang) - _gun_r.z * sin(ang);
-                gun_r = cross_product(gun_l, gun_u);
+                _gun_l.x = _gun_l.x - bar_pos.x;
+                _gun_l.y = _gun_l.y - bar_pos.y;
+                _gun_l.z = _gun_l.z - bar_pos.z;
+
+                _gun_l.y = _gun_l.y*cos(ang) - _gun_l.z*sin(ang);
+                _gun_l.z = _gun_l.y*sin(ang) + _gun_l.z*cos(ang);
+
+                gun_l.x = _gun_l.x + bar_pos.x;
+                gun_l.y = _gun_l.y + bar_pos.y;
+                gun_l.z = _gun_l.z + bar_pos.z;
             }
             break;
         case 's':
-            bar_z_rot = bar_z_rot - 5;
-            if (bar_z_rot < -45) {
-                bar_z_rot = -45;
+            bar_y_rot = bar_y_rot - 5;
+            if (bar_y_rot < -45) {
+                bar_y_rot = -45;
             } else {
                 float ang = -5*pi/180;
-                gun_l.x = _gun_l.x * cos(ang) - _gun_r.x * sin(ang);
-                gun_l.y = _gun_l.y * cos(ang) - _gun_r.y * sin(ang);
-                gun_l.z = _gun_l.z * cos(ang) - _gun_r.z * sin(ang);
-                gun_r = cross_product(gun_l, gun_u);
+                _gun_l.x = _gun_l.x - bar_pos.x;
+                _gun_l.y = _gun_l.y - bar_pos.y;
+                _gun_l.z = _gun_l.z - bar_pos.z;
+
+                _gun_l.y = _gun_l.y*cos(ang) - _gun_l.z*sin(ang);
+                _gun_l.z = _gun_l.y*sin(ang) + _gun_l.z*cos(ang);
+
+                gun_l.x = _gun_l.x + bar_pos.x;
+                gun_l.y = _gun_l.y + bar_pos.y;
+                gun_l.z = _gun_l.z + bar_pos.z;
             }
             break;
 
         case 'd':
             bar_x_rot = bar_x_rot + 5;
-            if (bar_x_rot > 45) {
+            if (bar_x_rot > 45)
                 bar_x_rot = 45;
-            } else {
-                // gun_u.x = _gun_u.x * cos(5*pi/180) - _gun_r.x * sin(5*pi/180);
-                // gun_u.y = _gun_u.y * cos(5*pi/180) - _gun_r.y * sin(5*pi/180);
-                // gun_u.z = _gun_u.z * cos(5*pi/180) - _gun_r.z * sin(5*pi/180);
-                // gun_r = cross_product(gun_l, gun_u);
-            }
             break;
         case 'f':
             bar_x_rot = bar_x_rot - 5;
-            if (bar_x_rot < -45) {
+            if (bar_x_rot < -45)
                 bar_x_rot = -45;
-            } else {
-                // gun_u.x = _gun_u.x * cos(-5*pi/180) - _gun_r.x * sin(-5*pi/180);
-                // gun_u.y = _gun_u.y * cos(-5*pi/180) - _gun_r.y * sin(-5*pi/180);
-                // gun_u.z = _gun_u.z * cos(-5*pi/180) - _gun_r.z * sin(-5*pi/180);
-                // gun_r = cross_product(gun_l, gun_u);
-            }
             break;
 
         default:
@@ -349,17 +338,17 @@ void display()
 
          glTranslatef(0,sphereRadius + halfSphereRadius,0);
          glRotatef(90,1,0,0);
-         glRotatef(bar_z_rot,0,1,0);
+         glRotatef(bar_y_rot,1,0,0);
          glRotatef(bar_x_rot,0,0,1);
          // drawHalfSphere(halfSphereRadius,80,20,0);
          glRotatef(-90,1,0,0);
 
          glTranslatef(0,cylinderHeight,0);
          glRotatef(90,1,0,0);
-         // drawCylinder(halfSphereRadius,cylinderHeight,80,20,0);
+         drawCylinder(halfSphereRadius,cylinderHeight,80,20,0);
          glRotatef(-90,1,0,0);
          glRotatef(-90,1,0,0);
-         // drawHorn(halfSphereRadius,80,20,1);
+         drawHorn(halfSphereRadius,80,20,1);
 
      } glPopMatrix();
 
@@ -422,21 +411,13 @@ void init()
     cam_l.y = -1.0/sqrt(2);
     cam_l.z = 0;
 
-    gun_u.x = 0;
-    gun_u.y = 0;
-    gun_u.z = 1;
-
-    gun_r.x = 1;
-    gun_r.y = 0;
-    gun_r.z = 0;
-
-    gun_l.x = 0;
-    gun_l.y = 1;
-    gun_l.z = 0;
+    gun_l.x = bar_pos.x;
+    gun_l.y = bar_pos.y+1000;
+    gun_l.z = bar_pos.z;
 
     gun_y_rot = 0.0;
     gun_z_rot = 0.0;
-    bar_z_rot = 0.0;
+    bar_y_rot = 0.0;
     bar_x_rot = 0.0;
 
 
